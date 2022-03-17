@@ -1,14 +1,37 @@
 package base;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class NoteBook {
+public class NoteBook implements java.io.Serializable {
 	private ArrayList<Folder> folders;
+
+	private static final long serialVersionUID = 1L;
 
 	public NoteBook() {
 		folders = new ArrayList<Folder>();
+	}
+
+	/**
+	 * Constructor of an object NoteBook from an object serialization on disk
+	 *
+	 * @param file, the path of the file for loading the object serialization
+	 */
+	public NoteBook(String file) {
+		try (
+			FileInputStream fis = new FileInputStream(file);
+			ObjectInputStream in = new ObjectInputStream(fis);
+		) {
+			NoteBook n = (NoteBook) in.readObject();
+			folders = n.getFolders();
+		} catch (Exception e) {
+			System.out.println("NoteBook(String) error!");
+		}
 	}
 
 	public boolean createTextNote(String folderName, String title) {
@@ -78,5 +101,24 @@ public class NoteBook {
 		}
 
 		return result;
+	}
+
+	/**
+	 * method to save the NoteBook instance to file
+	 *
+	 * @param file, the path of the file where to save the object serialization
+	 * @return true if save on file is successful, false otherwise
+	 */
+	public boolean save(String file) {
+		try (
+			FileOutputStream fos = new FileOutputStream(file);
+			ObjectOutputStream out = new ObjectOutputStream(fos);
+		) {
+			out.writeObject(this);
+		} catch (Exception e) {
+			System.out.println("NoteBook::save() error");
+			return false;
+		}
+		return true;
 	}
 }
