@@ -106,7 +106,35 @@ public class NoteBookWindow extends Application {
 		buttonSave.setPrefSize(100, 20);
 		buttonSave.setDisable(true);
 
-		hbox.getChildren().addAll(buttonLoad, buttonSave);
+		// Task 5: Search field
+		// Search label
+		Label labelSearch = new Label("Search: ");
+		// TextField
+		TextField textSearch = new TextField();
+		// Search button
+		Button buttonSearch = new Button("Search");
+		buttonSearch.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				currentSearch = textSearch.getText();
+				textAreaNote.setText("");
+				updateListView();
+			}
+		});
+
+		// Clear search button
+		Button buttonClear = new Button("Clear Search");
+		buttonClear.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				currentSearch = "";
+				textSearch.setText("");
+				textAreaNote.setText("");
+				updateListView();
+			}
+		});
+
+		hbox.getChildren().addAll(buttonLoad, buttonSave, labelSearch, textSearch, buttonSearch, buttonClear);
 
 		return hbox;
 	}
@@ -132,7 +160,7 @@ public class NoteBookWindow extends Application {
 			public void changed(ObservableValue ov, Object t, Object t1) {
 				currentFolder = t1.toString();
 				// this contains the name of the folder selected
-				// TODO update listview
+				// Task 2: update listview
 				updateListView();
 
 			}
@@ -195,9 +223,18 @@ public class NoteBookWindow extends Application {
 			}
 		}
 
-		// Get the title of all notes (if folder is selected)
+		// Get titles from folders
 		if (folderObj != null) {
-			for (Note n : folderObj.getNotes()) {
+			List<Note> listOfNote = null;
+			// Get a list of notes based on search string
+			if (currentSearch.equals("")) {
+				listOfNote = folderObj.getNotes();
+			} else {
+				listOfNote = folderObj.searchNotes(currentSearch);
+			}
+
+			// Retrieve the title
+			for (Note n : listOfNote) {
 				if (n instanceof TextNote) {
 					list.add(n.getTitle());
 				}
