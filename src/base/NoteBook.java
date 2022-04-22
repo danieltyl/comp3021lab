@@ -121,4 +121,13 @@ public class NoteBook implements java.io.Serializable {
 		}
 		return true;
 	}
+
+	/**
+	 * method to add a new folder in the notebook
+	 * @param folderName
+	 */
+	public void addFolder(String folderName) {
+		Folder newFolder = new Folder(folderName);
+		folders.add(newFolder);
+	}
 }
