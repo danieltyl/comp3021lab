@@ -163,10 +163,10 @@ public class NoteBookWindow extends Application {
 				if (file != null) {
 					noteBook.save(file.getAbsolutePath());
 
-					Alert alert = new Alert(AlertType.INFORMATION);
-					alert.setTitle("Successfully saved");
-					alert.setContentText("Your file has been saved to file " + file.getName());
-					alert.showAndWait().ifPresent(rs -> {
+					showAlert(AlertType.INFORMATION,
+							"Successfully saved",
+							"Your file has been saved to file " + file.getName())
+					.ifPresent(rs -> {
 						if (rs == ButtonType.OK) {
 							System.out.println("Pressed OK.");
 						}
@@ -248,18 +248,14 @@ public class NoteBookWindow extends Application {
 
 					// Validation
 					if (inputName.equals("")) {
-						Alert alert = new Alert(AlertType.WARNING);
-						alert.setTitle("Warning");
-						alert.setContentText("Please input an valid folder name");
-						alert.showAndWait();
+						showAlert(AlertType.WARNING, "Warning", "Please input an valid folder name");
 						return;
 					} else {
 						for (Folder f : noteBook.getFolders()) {
 							if (f.getName().equals(inputName)) {
-								Alert alert = new Alert(AlertType.WARNING);
-								alert.setTitle("Warning");
-								alert.setContentText("You already have a folder named with " + inputName);
-								alert.showAndWait();
+								showAlert(AlertType.WARNING,
+										"Warning",
+										"You already have a folder named with " + inputName);
 								return;
 							}
 						}
@@ -317,10 +313,7 @@ public class NoteBookWindow extends Application {
 			public void handle(ActionEvent event) {
 				// Check if user selected a folder
 				if (currentFolder.equals("") || currentFolder.equals("-----")) {
-					Alert alert = new Alert(AlertType.WARNING);
-					alert.setTitle("Warning");
-					alert.setContentText("Please choose a folder first!");
-					alert.showAndWait();
+					showAlert(AlertType.WARNING, "Warning", "Please choose a folder first!");
 					return;
 				}
 
@@ -335,10 +328,10 @@ public class NoteBookWindow extends Application {
 
 					// Create the textNote and show popup if success
 					if (noteBook.createTextNote(currentFolder, inputNoteName)) {
-						Alert alert = new Alert(AlertType.INFORMATION);
-						alert.setTitle("Successful!");
-						alert.setContentText("Insert note " + inputNoteName + " to folder " + currentFolder + " successfully!");
-						alert.showAndWait();
+						showAlert(AlertType.INFORMATION,
+								"Successful!",
+								"Insert note " + inputNoteName + " to folder " + currentFolder + " successfully!");
+
 					}
 
 					updateListView();
@@ -434,10 +427,7 @@ public class NoteBookWindow extends Application {
 			public void handle(ActionEvent event) {
 				// Check if a folder and a note have been selected
 				if (currentFolder.equals("") || currentFolder.equals("-----") || currentNote.equals("")) {
-					Alert alert = new Alert(AlertType.WARNING);
-					alert.setTitle("Warning");
-					alert.setContentText("Please select a folder and a note");
-					alert.showAndWait();
+					showAlert(AlertType.WARNING, "Warning", "Please select a folder and a note");
 					return;
 				}
 
@@ -474,10 +464,7 @@ public class NoteBookWindow extends Application {
 			public void handle(ActionEvent event) {
 				// Check if a folder and a note have been selected
 				if (currentFolder.equals("") || currentFolder.equals("-----") || currentNote.equals("")) {
-					Alert alert = new Alert(AlertType.WARNING);
-					alert.setTitle("Warning");
-					alert.setContentText("Please select a folder and a note");
-					alert.showAndWait();
+					showAlert(AlertType.WARNING, "Warning", "Please select a folder and a note");
 					return;
 				}
 
@@ -490,11 +477,7 @@ public class NoteBookWindow extends Application {
 					if (folderObj != null) {
 						if (folderObj.removeNotes(currentNote)) {
 							// Show a confirmation message
-							Alert alert = new Alert(AlertType.CONFIRMATION);
-							alert.setTitle("Succeed!");
-							alert.setContentText("Your note has been successfully removed");
-							alert.showAndWait();
-
+							showAlert(AlertType.CONFIRMATION, "Succeed!", "Your note has been successfully removed");
 							updateListView();
 						}
 					}
@@ -514,6 +497,13 @@ public class NoteBookWindow extends Application {
 		grid.add(textAreaNote, 0, 1);
 
 		return grid;
+	}
+
+	private Optional showAlert(AlertType alertType, String Title, String Content) {
+		Alert alert = new Alert(alertType);
+		alert.setTitle(Title);
+		alert.setContentText(Content);
+		return alert.showAndWait();
 	}
 
 	// Lab 8 Task 1
