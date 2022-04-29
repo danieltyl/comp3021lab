@@ -16,6 +16,8 @@ public class LettersUI extends Application {
 	final static int SCENE_WIDTH = 300;
 	final static int SCENE_HEIGHT = 150;
 
+	private volatile boolean active = false;
+
 	public static void main(String[] args) {
 		launch(LettersUI.class, args);
 	}
@@ -26,40 +28,45 @@ public class LettersUI extends Application {
 		hbox.setPadding(new Insets(15, 12, 15, 12));
 		hbox.setSpacing(10); // Gap between nodes
 
-		String[] string_thread = { "A", "B", "C" };
+		String[] string_thread = { "A", "B", "C", "D", "E" };
 		for (String s : string_thread) {
 			Text text = new Text(s);
 			text.setFont(new Font(50));
 			text.setVisible(false);
 			hbox.getChildren().addAll(text);
 		}
-		
+
 		Scene scene = new Scene(hbox, SCENE_WIDTH, SCENE_HEIGHT);
 		stage.setScene(scene);
 		stage.setTitle("Example");
 		stage.show();
 
-		// Since now you have to add 3 more Threads, Can we use a for loop instead ?
-		Thread t1 = new Thread(new MyTask((Text) hbox.getChildren().get(0), this));
-		Thread t2 = new Thread(new MyTask((Text) hbox.getChildren().get(1), this));
-		Thread t3 = new Thread(new MyTask((Text) hbox.getChildren().get(2), this));
-		t1.setDaemon(true);
-		t2.setDaemon(true);
-		t3.setDaemon(true);
-		t1.start();
-		t2.start();
-		t3.start();
-	}
-
-	public void showText(Text text, boolean show) {
-		// the parameter show tells if the text has to appear o disappear
-		if (show) {
-			text.setVisible(true);
-		} else {
-			text.setVisible(false);
+		for (int i = 0; i < string_thread.length; i++) {
+			Thread temp = new Thread(new MyTask((Text) hbox.getChildren().get(i), this));
+			temp.setDaemon(true);
+			temp.start();
 		}
 	}
+
+	public synchronized void showText(Text text, boolean show) {
+		// the parameter show tells if the text has to appear or disappear
+		if (show) {
+			while (active) {
+				try {
+					wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			active = true;
+		} else {
+			active = false;
+			notify();
+		}
+		text.setVisible(show);
+	}
 	class MyTask implements Runnable {
+
 
 		int timeBudgetms = 5 * 60 * 1000;
 		LettersUI instance;
@@ -86,6 +93,7 @@ public class LettersUI extends Application {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+
 			}
 		}
 	}

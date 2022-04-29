@@ -12,14 +12,14 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 /**
- * 
+ *
  * COMP 3021
- * 
- * This is a unresponsive JavaFX GUI Once you press start, the program starts to print hello! 
+ *
+ * This is a unresponsive JavaFX GUI Once you press start, the program starts to print hello!
  * to the console and the GUI becomes unresponsive and therefore you cannot press stop button
- * 
+ *
  * We need to use threads!
- * 
+ *
  * @author valerio
  *
  */
@@ -43,7 +43,7 @@ public class UnresponsiveUI extends Application {
 
 	/**
 	 * This create the top section
-	 * 
+	 *
 	 * @return
 	 */
 	private HBox addHBox() {
@@ -57,9 +57,12 @@ public class UnresponsiveUI extends Application {
 			@Override
 			public void handle(ActionEvent event) {
 				stop = false;
-				while (!stop) {
-					System.out.println("hello!");
-				}
+				Thread t = new Thread(() -> {
+					while (!stop) {
+						System.out.println("hello!");
+					}
+				});
+				t.start();
 			}
 		});
 

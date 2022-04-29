@@ -33,8 +33,11 @@ public class RacyCounter {
 		public void run(){
 			for (int i = 0; i < ITERATIONS; i++) {
 				//add synchronization here
-				int temp = counter;
-				counter = temp +1;
+				// Simply use the lock of the class
+				synchronized (RacyCounter.class) {
+					int temp = counter;
+					counter = temp +1;
+				}
 			}
 		}
 	}
